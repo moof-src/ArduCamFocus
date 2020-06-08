@@ -19,9 +19,10 @@ tags:
 - focus
 
 screenshots:
+/assets/img/plugins/ArduCamFocus/ArduCamFocusScreenCap.mov
 /assets/img/plugins/ArduCamFocus/ControlScreenShot.png
 
-featuredimage: /assets/img/plugins/ArduCamFocus/ControlScreenShot.png
+featuredimage: /assets/img/plugins/ArduCamFocus/ArduCamFocusScreenCap.mov
 
 compatibility:
   octoprint:
