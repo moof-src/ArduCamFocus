@@ -1,0 +1,4 @@
+include README.md
+recursive-include ArduCamFocus/templates *
+recursive-include ArduCamFocus/translations *
+recursive-include ArduCamFocus/static *

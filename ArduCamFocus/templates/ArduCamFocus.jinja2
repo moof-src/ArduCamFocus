@@ -1,0 +1,7 @@
+<div id="control-focus" class="jog-panel">
+	<h1>ArduCam Focus</h1>
+	<div>
+		<button id="control-focusdec" class="btn box" data-bind="enable: true, click: function() { OctoPrint.control.sendGcode(left()); }"><i class="fa fa-arrow-left"></i></button>
+		<button id="control-focusinc" class="btn box" data-bind="enable: true, click: function() { OctoPrint.control.sendGcode(right()); }"><i class="fa fa-arrow-right"></i></button>
+	</div>
+</div>
