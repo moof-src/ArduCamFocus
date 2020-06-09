@@ -7,13 +7,21 @@ import smbus
 class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin, 
                          octoprint.plugin.AssetPlugin,
                          octoprint.plugin.TemplatePlugin,
-                         octoprint.plugin.StartupPlugin,
-                         octoprint.plugin.ShutdownPlugin):
+                         octoprint.plugin.StartupPlugin):
 
 	def __init__(self):
-                self.bus = smbus.SMBus(0)
+		self.bus = None
 		self.current_focus = 100
-		self.pi = None
+
+	##~~ StartupPlugin mixin
+	def on_startup(self):
+		try:
+			self.bus = smbus.SMBus(0)
+		except IOError:
+			self._logger.error("Unable to open SMBUS")
+
+	def on_after_startup(self):
+		self.current_focus = self._settings.get_int(["FOCUS"])
 
 	##~~ SettingsPlugin mixin
 	def get_settings_defaults(self):
@@ -45,7 +53,7 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
 	##-- Template hooks
 
 	def get_template_configs(self):
-		return [dict(type="settings",custom_bindings=False)]
+		return [dict(type="generic",custom_bindings=False)]
 
 	##~~ Softwareupdate hook
 
@@ -57,12 +65,12 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
 
 				# version check: github repository
 				type="github_release",
-				user="moof",
+				user="moof-src",
 				repo="ArduCamFocus",
 				current=self._plugin_version,
 
 				# update method: pip
-				pip="https://github.com/moof/ArduCamFocus/archive/{target_version}.zip"
+				pip="https://github.com/moof-src/ArduCamFocus/archive/{target_version}.zip"
 			)
 		)
 
@@ -70,31 +78,43 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
 
 	def focus (self, f): 
 		if f < 100:
-                        f = 100
+			f = 100
 		elif f > 1000:
-                        f = 1000
-                value = (f << 4) & 0x3ff0
-                data1 = (value >> 8) & 0x3f
-                data2 = value & 0xf0
-                self._logger.info("setting FOCUS to %d" % (f))
-                self.bus.write_byte_data(0xc, data1, data2)
-                self.current_focus = f
+			f = 1000
+		value = (f << 4) & 0x3ff0
+		data1 = (value >> 8) & 0x3f
+		data2 = value & 0xf0
+		self._logger.info("setting FOCUS to %d" % (f))
+		try: 
+			self.bus.write_byte_data(0xc, data1, data2)
+			self.current_focus = f
+			self._settings.set_int(["FOCUS"], f, min=100, max=1000)
+			self._settings.save()
+			self._plugin_manager.send_plugin_message(self._identifier, dict(focus_val=self.current_focus))
+		except:
+			self._logger.info("Error writing to BUS")
+			self._plugin_manager.send_plugin_message(self._identifier, dict(error="Error Writing to BUS"))
 
 	##~~ atcommand hook
 
 	def processAtCommand(self, comm_instance, phase, command, parameters, tags=None, *args, **kwargs):
+		if self.bus is None:
+			self._logger.info("No SMBUS to use for %s" % command)
+			self._plugin_manager.send_plugin_message(self._identifier, dict(error="No SMBUS"))
+			return
+
 		if command == 'ARDUCAMFOCUS':
-                        try:
-                                self.focus(self.current_focus + int(parameters))
-                        except ValueError:
-		                self._logger.info("unknown parameter %s" % parameters)
-                                return
+			try:
+				self.focus(self.current_focus + int(parameters))
+			except ValueError:
+				self._logger.info("unknown parameter %s" % parameters)
+				return
 		elif command == 'ARDUCAMFOCUSSET':
-                        try:
-                                self.focus(int(parameters))
-                        except ValueError:
-		                self._logger.info("unknown parameter %s" % parameters)
-                                return
+			try:
+				self.focus(int(parameters))
+			except ValueError:
+				self._logger.info("unknown parameter %s" % parameters)
+				return
 
 __plugin_name__ = "ArduCamFocus"
 __plugin_pythoncompat__ = ">=2.7,<4"

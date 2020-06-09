@@ -4,7 +4,7 @@ layout: plugin
 id: ArduCamFocus
 title: ArduCamFocus
 description: Plugin to control ArduCam with motorized focus control on octopi
-author: moof-src, jneilliii
+author: moof, jneilliii
 license: AGPLv3
 
 date: 2020-06-08
@@ -18,7 +18,7 @@ tags:
 - camera
 - focus
 
-featuredimage: /assets/img/plugins/ArduCamFocus/screenshot_arducamfocus.png
+featuredimage: /assets/img/plugins/ArduCamFocus/ControlScreenShot.png
 
 compatibility:
   octoprint:
@@ -32,6 +32,8 @@ compatibility:
 # ArduCamFocus
 
 Here is a simple plugin to control an ArduCam motorized focus camera using the OctoPrint Control tab. It uses I2C and it is expected the user followed the ArduCam installation instructions and enabled I2C support.
+
+![screenshot](/assets/img/plugins/ArduCamFocus/ControlScreenShot.png)
 
 It utilizes these custom commands from your slicer to adjust focus while printing:
   `@ARDUCAMFOCUS <RELATIVE-FOCUS>` to adjust focus 

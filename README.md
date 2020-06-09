@@ -2,10 +2,16 @@
 
 This plugin controls the focus on an ArduCam Motorized Focus Camera.  https://www.arducam.com/docs/cameras-for-raspberry-pi/motorized-focus-camera/
 
+![screenshot](extras/assets/img/plugins/ArduCamFocus/ControlScreenShot.png)
+
 It uses a custom `@ARDUCAMFOCUSSET FOCUS` command that can be incorporated within your slicer to automatically adjust focus while printing. 
 You can also send relative adjustments with `@ARDUCAMFOCUS 50` or `@ARDUCAMFOCUS -50`
 
-Example: `@ARDUCAMFOCUSSET 300` will set the focus to 300.   
+Example: `@ARDUCAMFOCUSSET 300` will set the focus to 300.
+
+## Video Example
+
+<video  width="800" height="600" src="extras/assets/img/plugins/ArduCamFocus/ArduCamFocusScreenCap.mov"></video>
 
 ## Pre-Installation Requirements
 
