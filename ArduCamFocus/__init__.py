@@ -77,7 +77,8 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
 		data1 = (value >> 8) & 0x3f
 		data2 = value & 0xf0
 		try: 
-			self.bus = smbus.SMBus(0)
+			if self.bus == None:
+				self.bus = smbus.SMBus(0)
 			self._logger.info("setting FOCUS to %d" % (f))
 			self.bus.write_byte_data(0xc, data1, data2)
 			self.current_focus = f
