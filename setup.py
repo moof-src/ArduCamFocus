@@ -14,7 +14,7 @@ plugin_package = "ArduCamFocus"
 plugin_name = "ArduCamFocus"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.0.2"
+plugin_version = "0.0.3"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
@@ -27,7 +27,7 @@ plugin_author = "moof"
 plugin_author_email = "not-a-chance.noway"
 
 # The plugin's homepage URL. Can be overwritten within OctoPrint's internal data via __plugin_url__ in the plugin module
-plugin_url = "https://github.com/moof/ArduCamFocus"
+plugin_url = "https://github.com/moof-src/ArduCamFocus"
 
 # The plugin's license. Can be overwritten within OctoPrint's internal data via __plugin_license__ in the plugin module
 plugin_license = "AGPLv3"
