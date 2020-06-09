@@ -11,14 +11,6 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
 
 	def __init__(self):
 		self.bus = None
-		self.current_focus = 100
-
-	##~~ StartupPlugin mixin
-	def on_startup(self):
-		try:
-			self.bus = smbus.SMBus(0)
-		except IOError:
-			self._logger.error("Unable to open SMBUS")
 
 	def on_after_startup(self):
 		self.current_focus = self._settings.get_int(["FOCUS"])
@@ -84,25 +76,25 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
 		value = (f << 4) & 0x3ff0
 		data1 = (value >> 8) & 0x3f
 		data2 = value & 0xf0
-		self._logger.info("setting FOCUS to %d" % (f))
 		try: 
+			self.bus = smbus.SMBus(0)
+			self._logger.info("setting FOCUS to %d" % (f))
 			self.bus.write_byte_data(0xc, data1, data2)
 			self.current_focus = f
 			self._settings.set_int(["FOCUS"], f, min=100, max=1000)
 			self._settings.save()
 			self._plugin_manager.send_plugin_message(self._identifier, dict(focus_val=self.current_focus))
+		except IOError:
+			self._plugin_manager.send_plugin_message(self._identifier, dict(error="Unable to open SMBUS"))
+			return
 		except:
 			self._logger.info("Error writing to BUS")
 			self._plugin_manager.send_plugin_message(self._identifier, dict(error="Error Writing to BUS"))
+			return
 
 	##~~ atcommand hook
 
 	def processAtCommand(self, comm_instance, phase, command, parameters, tags=None, *args, **kwargs):
-		if self.bus is None:
-			self._logger.info("No SMBUS to use for %s" % command)
-			self._plugin_manager.send_plugin_message(self._identifier, dict(error="No SMBUS"))
-			return
-
 		if command == 'ARDUCAMFOCUS':
 			try:
 				self.focus(self.current_focus + int(parameters))
