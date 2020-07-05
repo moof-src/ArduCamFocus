@@ -31,7 +31,7 @@ compatibility:
 
 # ArduCamFocus
 
-Here is a simple plugin to control an ArduCam motorized focus camera using the OctoPrint Control tab. It uses I2C and it is expected the user followed the ArduCam installation instructions and enabled I2C support.
+Here is a simple plugin to control an ArduCam motorized focus camera using the OctoPrint Control tab. It uses I2C and it is expected the user followed the Pre-Installation requirements below.
 
 ![screenshot](/assets/img/plugins/ArduCamFocus/ControlScreenShot.png)
 
@@ -43,7 +43,34 @@ Example: `@ARDUCAMFOCUSSET 100` will move the focus to 100.
 
 ## Pre-Installation Requirements
 
-Please follow the instructions [here](https://github.com/moof-src/ArduCamFocus#pre-installation-requirements) in order for this plugin to properly operate. Without these steps the plugin will not be able to control the I2C camera on your Pi and as a result the focus will not change.
+Please follow the manufacturer's instructions:
+
+This plugin uses I2C to communicate with the camera.  That is not enabled by default.  The ArduCamFocus plugin will not function until
+you enable I2C.
+  ssh to your octopi and enter this commands (this only needs to be done once):
+```bash
+if ! grep -Fxq "^#ArduCamFocus$" /boot/config.txt; then
+sudo cat << end_of_file > /boot/config.txt
+#ArduCamFocus
+dtparam=i2c_vc=on
+dtparam=i2c_arm=on
+end_of_file
+fi
+```
+After executing the above command, the file /boot/config.txt should now have the commands to enable I2C.  In addition, you have to enable the I2C
+kernel module using raspi-config.  Again, ssh to your octopi, and then enter this command:
+```bash
+sudo raspi-config
+```
+
+1. select "5 Interfacing Options"
+2. select "P5 I2C"
+  1. raspi-config will ask, "Would you like the ARM I2C interface to be enabled?"
+  2. select "<Yes>"
+and you should see, "The ARM I2C interface is enabled"
+3. select "<Finish>"
+
+After you reboot, the camera should become operational in OctoPrint.
 
 ## Settings
 

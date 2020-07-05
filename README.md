@@ -35,13 +35,12 @@ kernel module using raspi-config.  Again, ssh to your octopi, and then enter thi
 sudo raspi-config
 ```
 
-select "5 Interfacing Options"
-select "P5 I2C"
-
-raspi-config will ask, "Would you like the ARM I2C interface to be enabled?"
-select "<Yes>"
+1. select "5 Interfacing Options"
+2. select "P5 I2C"
+  1. raspi-config will ask, "Would you like the ARM I2C interface to be enabled?"
+  2. select "<Yes>"
 and you should see, "The ARM I2C interface is enabled"
-select "<Finish>"
+3. select "<Finish>"
 
 After you reboot, the camera should become operational in OctoPrint.
     
