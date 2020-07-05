@@ -68,7 +68,7 @@ sudo raspi-config
 3. raspi-config will ask, "Would you like the ARM I2C interface to be enabled?"
 4. select "Yes"
 5. you should see, "The ARM I2C interface is enabled"
-6. select "Finish"1. select "5 Interfacing Options"
+6. select "Finish"
 
 After you reboot, the camera should become operational in OctoPrint.
 
