@@ -22,7 +22,7 @@ you enable I2C.
   ssh to your octopi and enter this commands (this only needs to be done once):
 ```bash
 if ! grep -Fxq "^#ArduCamFocus$" /boot/config.txt; then
-sudo cat << end_of_file > /boot/config.txt
+sudo cat << end_of_file >> /boot/config.txt
 #ArduCamFocus
 dtparam=i2c_vc=on
 dtparam=i2c_arm=on
