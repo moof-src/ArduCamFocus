@@ -80,15 +80,15 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
 		value = (f << 4) & 0x3ff0
 		data1 = (value >> 8) & 0x3f
 		data2 = value & 0xf0
-                if self.bus:
-                        self._logger.info("setting FOCUS to %d" % (f))
-                        self.bus.write_byte_data(0xc, data1, data2)
-                        self.current_focus = f
-                        self._settings.set_int(["FOCUS"], f, min=100, max=1000)
-                        self._settings.save()
-                        self._plugin_manager.send_plugin_message(self._identifier, dict(focus_val=self.current_focus))
-                else:
-                        self._plugin_manager.send_plugin_message(self._identifier, dict(error="unable to use SMBus/I2C"))
+		if self.bus:
+			self._logger.info("setting FOCUS to %d" % (f))
+			self.bus.write_byte_data(0xc, data1, data2)
+			self.current_focus = f
+			self._settings.set_int(["FOCUS"], f, min=100, max=1000)
+			self._settings.save()
+			self._plugin_manager.send_plugin_message(self._identifier, dict(focus_val=self.current_focus))
+		else:
+			self._plugin_manager.send_plugin_message(self._identifier, dict(error="unable to use SMBus/I2C"))
 
 	##~~ atcommand hook
 
