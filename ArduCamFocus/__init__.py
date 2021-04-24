@@ -82,7 +82,16 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
 		data2 = value & 0xf0
 		if self.bus:
 			self._logger.info("setting FOCUS to %d" % (f))
-			self.bus.write_byte_data(0xc, data1, data2)
+			write_attempts = 10
+			while write_attempts:
+				try:
+					self.bus.write_byte_data(0xc, data1, data2)
+				except IOError:
+					write_attempts -= 1
+				else:
+					break
+			if not write_attempts:
+				self._plugin_manager.send_plugin_message(self._identifier, dict(error="Trouble accessing camera. I2C bus failure.  Is camera plugged in?"))
 			self.current_focus = f
 			self._settings.set_int(["FOCUS"], f, min=100, max=1000)
 			self._settings.save()
