@@ -65,6 +65,16 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
                 user="moof-src",
                 repo="ArduCamFocus",
                 current=self._plugin_version,
+                stable_branch=dict(
+                    name="Stable", branch="master", comittish=["master"]
+                ),
+                prerelease_branches=[
+                    dict(
+                        name="Release Candidate",
+                        branch="rc",
+                        comittish=["rc", "master"],
+                    )
+                ],
 
                 # update method: pip
                 pip="https://github.com/moof-src/ArduCamFocus/archive/{target_version}.zip"
