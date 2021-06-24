@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 import octoprint.plugin
+import subprocess
 import smbus
 
 class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin, 
@@ -13,11 +14,35 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
 		self.bus = None
 
 	def on_after_startup(self):
+		global ID
+		ID = self.inquire()
 		try: 
-			self.bus = smbus.SMBus(0)
+			self.bus = smbus.SMBus(int(ID))
 		except:
+			pass
+		if self.bus == None and ID == '0':
+			try: 
+				self.bus = smbus.SMBus(10)
+			except:
+				pass
+		if self.bus == None:
 			self._plugin_manager.send_plugin_message(self._identifier, dict(error="Unable to open SMBUS"))
 		self.current_focus = self._settings.get_int(["FOCUS"])
+
+
+	def inquire(self):
+		cmd = "ls /dev/i2c* | sed 's/\/dev\/i2c-//g'"
+		busses = subprocess.check_output(cmd, shell=True).decode('utf-8')
+		busses=busses.split('\n')
+		for num in busses:
+			if num in ['0','1','10']:
+				cmd = "i2cdetect -y %s 0xc 0xc | sed -n '2'p | sed 's/^00: \+//'" % num
+				data = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
+				if data=="0c":
+					return num
+				else:
+					return '0'
+		return '2'
 
 	##~~ SettingsPlugin mixin
 	def get_settings_defaults(self):
