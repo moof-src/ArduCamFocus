@@ -13,9 +13,20 @@ class ArduCamFocusPlugin(octoprint.plugin.SettingsPlugin,
 		self.bus = None
 
 	def on_after_startup(self):
-		try: 
-			self.bus = smbus.SMBus(0)
-		except:
+		for busNum in (10, 0, 1): # Defaults to 10 on RPI4, seems to have been 0 previously?
+			try:
+				self.bus = smbus.SMBus(busNum)
+				self.bus.read_byte(0x36)
+				self.bus.write_quick(0x0c)
+			except FileNotFoundError:
+				self._logger.info("Unable to open SMBUS: %d" % (busNum))
+			except IOError:
+				self._logger.info("Unable to find ArduCamFocus on SMBUS: %d" % (busNum))
+				self.bus = None
+			else:
+				self._logger.info("Found ArduCamFocus on SMBUS: %d" % (busNum))
+				break
+		if not self.bus:
 			self._plugin_manager.send_plugin_message(self._identifier, dict(error="Unable to open SMBUS"))
 		self.current_focus = self._settings.get_int(["FOCUS"])
 
